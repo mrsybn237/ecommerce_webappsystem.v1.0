@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VapeBay — Toko Vape Online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #090909 0%, #1a1a1a 100%);
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    a {
+      color: #ffcc00;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #ffffff;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #121212;
+      border-bottom: 2px solid #ffcc00;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffcc00;
+    }
+
+    header nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    header nav a {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .hero h2 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .hero h2 span {
+      color: #ffcc00;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #aaaaaa;
+      margin-bottom: 28px;
+    }
+
+    .hero button {
+      background: #ffcc00;
+      color: #121212;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .hero button:hover {
+      background: #ffffff;
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(255, 204, 0, 0.4);
+    }
+
+    /* ===== PROMO BANNER ===== */
+    .promo-banner {
+      background: #ffcc00;
+      color: #121212;
+      text-align: center;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    /* ===== SECTION PRODUK ===== */
+    .section-produk {
+      padding: 60px 40px;
+    }
+
+    .section-produk h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .section-produk h2 span {
+      color: #ffcc00;
+    }
+
+    /* ===== PRODUCT GRID ===== */
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .product-card {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 15px;
+      width: 260px;
+      padding: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+      border-color: #ffcc00;
+      box-shadow: 0 10px 30px rgba(255, 204, 0, 0.15);
+      transform: translateY(-6px);
+    }
+
+    .product-card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+
+    .product-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .product-card .brand {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .product-card .price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffcc00;
+      margin-bottom: 14px;
+    }
+
+    .product-card button {
+      background: #ffcc00;
+      color: #121212;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .product-card button:hover {
+      background: #ffffff;
+      transform: scale(1.05);
+    }
+
+    /* ===== TESTIMONI ===== */
+    .section-testimoni {
+      padding: 60px 40px;
+      background: #111;
+      text-align: center;
+    }
+
+    .section-testimoni h2 {
+      font-size: 1.8rem;
+      margin-bottom: 32px;
+    }
+
+    .testimoni-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .testimoni-card {
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 24px;
+      width: 280px;
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .testimoni-card .nama {
+      margin-top: 12px;
+      font-weight: 700;
+      color: #ffcc00;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 32px 20px;
+      border-top: 1px solid #2a2a2a;
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- PROMO BANNER -->
+  <div class="promo-banner">
+    🔥 Diskon 20% semua produk bulan ini! Gunakan kode: <strong>VAPE20</strong>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">VapeBay</div>
+    <nav>
+      <a href="#">Produk</a>
+      <a href="#">Brand</a>
+      <a href="#">Tentang Kami</a>
+      <a href="#" id="cart-link">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h2>Temukan <span>Vape Terbaikmu</span></h2>
+    <p>Produk original · Pengiriman cepat · Harga terbaik di Indonesia</p>
+    <button>Lihat Semua Produk</button>
+  </section>
+
+  <!-- PRODUK -->
+  <section class="section-produk">
+    <h2>Produk <span>Unggulan</span></h2>
+
+    <div class="product-grid">
+
+      <div class="product-card">
+        <img src="https://placehold.co/200x200/1e1e1e/ffcc00?text=SMOK+X80" alt="SMOK X80" />
+        <h3>SMOK X80</h3>
+        <p class="brand">SMOK</p>
+        <p class="price">Rp 450.000</p>
+        <button onclick="tambahCart('SMOK X80')">Tambah ke Cart</button>
+      </div>
+
+      <div class="product-card">
+        <img src="https://placehold.co/200x200/1e1e1e/ffcc00?text=XROS+4" alt="Vaporesso XROS 4" />
+        <h3>Vaporesso XROS 4</h3>
+        <p class="brand">Vaporesso</p>
+        <p class="price">Rp 380.000</p>
+        <button onclick="tambahCart('Vaporesso XROS 4')">Tambah ke Cart</button>
+      </div>
+
+      <div class="product-card">
+        <img src="https://placehold.co/200x200/1e1e1e/ffcc00?text=Uwell+Crown" alt="Uwell Crown D" />
+        <h3>Uwell Crown D</h3>
+        <p class="brand">Uwell</p>
+        <p class="price">Rp 520.000</p>
+        <button onclick="tambahCart('Uwell Crown D')">Tambah ke Cart</button>
+      </div>
+
+      <div class="product-card">
+        <img src="https://placehold.co/200x200/1e1e1e/ffcc00?text=Naked+100" alt="Naked 100 Liquid" />
+        <h3>Naked 100 Liquid</h3>
+        <p class="brand">Naked 100</p>
+        <p class="price">Rp 120.000</p>
+        <button onclick="tambahCart('Naked 100 Liquid')">Tambah ke Cart</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TESTIMONI -->
+  <section class="section-testimoni">
+    <h2>Kata Pelanggan Kami</h2>
+    <div class="testimoni-grid">
+      <div class="testimoni-card">
+        "Vapebay is the best! Produk original semua, pengiriman cepat."
+        <div class="nama">— Andi, Jakarta</div>
+      </div>
+      <div class="testimoni-card">
+        "Saya sudah langganan 2 tahun. Harga kompetitif dan CS-nya responsif."
+        <div class="nama">— Sari, Bandung</div>
+      </div>
+      <div class="testimoni-card">
+        "Stok lengkap, gampang order. Recommended banget!"
+        <div class="nama">— Rizky, Surabaya</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>📞 08123456789 &nbsp;|&nbsp; ✉️ <a href="mailto:vapebayofficial@gmail.com">vapebayofficial@gmail.com</a></p>
+    <p style="margin-top: 8px;">© 2024 VapeBay. All rights reserved.</p>
+  </footer>
+
+  <!-- JAVASCRIPT — selalu taruh di sini, setelah semua HTML selesai -->
+  <script>
+
+    // Variabel untuk nyimpan jumlah item di cart
+    let cartCount = 0;
+
+    // Fungsi ini jalan setiap kali tombol "Tambah ke Cart" diklik
+    function tambahCart(namaProduk) {
+      cartCount++;  // tambah 1 ke hitungan cart
+      document.getElementById('cart-count').textContent = cartCount;
+      alert('✅ ' + namaProduk + ' ditambahkan ke cart!');
+    }
+
+    // Event listener untuk link email — ini aman karena HTML sudah ada
+    const emailLink = document.querySelector('a[href^="mailto"]');
+    emailLink.addEventListener('click', function() {
+      alert('Terima kasih! Kami akan segera merespons email kamu.');
+    });
+
+  </script>
+
+</body>
+</html>
