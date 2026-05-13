@@ -1,0 +1,60 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateProdukInput {
+  badge: String
+  brand: String!
+  deskripsi: String
+  gambar: String
+  harga: Int!
+  kategori: String!
+  nama: String!
+}
+
+input FilterProdukInput {
+  brand: String
+  kategori: String
+  maxHarga: Int
+  minHarga: Int
+  search: String
+}
+
+type Mutation {
+  createProduk(input: CreateProdukInput!): ProdukType!
+  deleteProduk(id: Int!): String!
+  updateProduk(id: Int!, input: UpdateProdukInput!): ProdukType!
+}
+
+type ProdukListType {
+  data: [ProdukType!]!
+  total: Int!
+}
+
+type ProdukType {
+  aktif: Boolean!
+  badge: String
+  brand: String!
+  created_at: String!
+  deskripsi: String
+  gambar: String
+  harga: Int!
+  id: Int!
+  kategori: String!
+  nama: String!
+}
+
+type Query {
+  produk(id: Int!): ProdukType!
+  produkList(filter: FilterProdukInput): ProdukListType!
+}
+
+input UpdateProdukInput {
+  badge: String
+  brand: String
+  deskripsi: String
+  gambar: String
+  harga: Int
+  kategori: String
+  nama: String
+}

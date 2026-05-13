@@ -1,84 +1,112 @@
 const express = require('express')
 const router  = express.Router()
-const { produk, cabang, stok } = require('../data/mockData')
-const { createError }          = require('../middleware/errorHandler')
+const pool    = require('../database/db')
+
+function createError(message, statusCode) {
+  const err = new Error(message)
+  err.statusCode = statusCode
+  return err
+}
 
 // GET /api/stok — semua stok semua cabang
-router.get('/', (req, res) => {
-  // Gabungkan data stok dengan nama produk dan cabang
-  const hasil = stok.map(s => {
-    const p = produk.find(x => x.id === s.produkId)
-    const c = cabang.find(x => x.id === s.cabangId)
-    return {
-      produkId:    s.produkId,
-      namaProduk:  p?.nama,
-      brandProduk: p?.brand,
-      cabangId:    s.cabangId,
-      namaCabang:  c?.nama,
-      kotaCabang:  c?.kota,
-      jumlah:      s.jumlah,
-      status:      s.jumlah === 0 ? 'habis' : s.jumlah < 3 ? 'hampir habis' : 'tersedia'
-    }
-  })
+router.get('/', async (req, res, next) => {
+  try {
+    const hasil = await pool.query(`
+      SELECT
+        s.produk_id,
+        s.cabang_id,
+        p.nama    AS produk,
+        p.brand   AS brand,
+        c.nama    AS cabang,
+        c.kota    AS kota,
+        s.jumlah,
+        CASE
+          WHEN s.jumlah = 0     THEN 'habis'
+          WHEN s.jumlah < 3     THEN 'hampir habis'
+          ELSE                       'tersedia'
+        END AS status
+      FROM stok s
+      JOIN produk  p ON s.produk_id = p.id
+      JOIN cabang  c ON s.cabang_id = c.id
+      WHERE p.aktif = TRUE
+      ORDER BY c.nama, p.nama
+    `)
 
-  res.json({ success: true, total: hasil.length, data: hasil })
+    res.json({ success: true, total: hasil.rows.length, data: hasil.rows })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // GET /api/stok/cabang/:cabangId — stok di satu cabang
-router.get('/cabang/:cabangId', (req, res, next) => {
-  const cabangId = parseInt(req.params.cabangId)
-  const cabangDipilih = cabang.find(c => c.id === cabangId)
+router.get('/cabang/:cabangId', async (req, res, next) => {
+  try {
+    const { cabangId } = req.params
 
-  if (!cabangDipilih) {
-    return next(createError('Cabang tidak ditemukan', 404))
-  }
+    const cabangResult = await pool.query(
+      'SELECT * FROM cabang WHERE id = $1', [cabangId]
+    )
+    if (cabangResult.rows.length === 0) {
+      return next(createError('Cabang tidak ditemukan', 404))
+    }
 
-  const stokCabang = stok
-    .filter(s => s.cabangId === cabangId)
-    .map(s => {
-      const p = produk.find(x => x.id === s.produkId)
-      return {
-        produkId:   s.produkId,
-        namaProduk: p?.nama,
-        brand:      p?.brand,
-        harga:      p?.harga,
-        jumlah:     s.jumlah,
-        status:     s.jumlah === 0 ? 'habis' : s.jumlah < 3 ? 'hampir habis' : 'tersedia'
-      }
+    const stokResult = await pool.query(`
+      SELECT
+        s.produk_id,
+        s.cabang_id,
+        p.nama    AS produk,
+        p.brand,
+        p.harga,
+        p.gambar,
+        s.jumlah,
+        CASE
+          WHEN s.jumlah = 0 THEN 'habis'
+          WHEN s.jumlah < 3 THEN 'hampir habis'
+          ELSE                   'tersedia'
+        END AS status
+      FROM stok s
+      JOIN produk p ON s.produk_id = p.id
+      WHERE s.cabang_id = $1 AND p.aktif = TRUE
+      ORDER BY p.nama
+    `, [cabangId])
+
+    res.json({
+      success: true,
+      cabang:  cabangResult.rows[0],
+      total:   stokResult.rows.length,
+      data:    stokResult.rows
     })
-
-  res.json({
-    success: true,
-    cabang:  cabangDipilih,
-    total:   stokCabang.length,
-    data:    stokCabang
-  })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // PATCH /api/stok/update — update jumlah stok
-router.patch('/update', (req, res, next) => {
-  const { produkId, cabangId, jumlah } = req.body
+router.patch('/update', async (req, res, next) => {
+  try {
+    const { produkId, cabangId, jumlah } = req.body
 
-  if (!produkId || !cabangId || jumlah === undefined) {
-    return next(createError('produkId, cabangId, dan jumlah wajib diisi', 400))
+    if (!produkId || !cabangId || jumlah === undefined) {
+      return next(createError('produkId, cabangId, jumlah wajib diisi', 400))
+    }
+
+    // INSERT kalau belum ada, UPDATE kalau sudah ada
+    const result = await pool.query(`
+      INSERT INTO stok (produk_id, cabang_id, jumlah)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (produk_id, cabang_id)
+      DO UPDATE SET jumlah = $3, updated_at = NOW()
+      RETURNING *
+    `, [produkId, cabangId, jumlah])
+
+    res.json({
+      success: true,
+      message: 'Stok berhasil diupdate',
+      data:    result.rows[0]
+    })
+  } catch (err) {
+    next(err)
   }
-
-  const stokItem = stok.find(
-    s => s.produkId === produkId && s.cabangId === cabangId
-  )
-
-  if (!stokItem) {
-    // Kalau belum ada, tambahkan entry baru
-    stok.push({ produkId, cabangId, jumlah })
-  } else {
-    stokItem.jumlah = jumlah
-  }
-
-  res.json({
-    success: true,
-    message: `Stok berhasil diupdate`,
-    data:    { produkId, cabangId, jumlahBaru: jumlah }
-  })
 })
 
 module.exports = router
